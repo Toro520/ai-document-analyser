@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Document Analyser</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 60px auto; padding: 0 20px; }
+    h1 { font-size: 24px; margin-bottom: 8px; }
+    p { color: #666; margin-bottom: 24px; }
+    input[type="file"] { display: block; margin-bottom: 16px; }
+    button { background: #6c63ff; color: white; border: none; padding: 10px 24px; border-radius: 6px; cursor: pointer; font-size: 15px; }
+    button:hover { background: #5a52d5; }
+    #result { margin-top: 32px; background: #f5f5f5; border-radius: 8px; padding: 20px; display: none; }
+    #result h2 { font-size: 16px; margin-bottom: 8px; }
+    #summary { font-size: 15px; line-height: 1.7; color: #333; }
+    #wordcount { font-size: 12px; color: #999; margin-top: 12px; }
+    #loading { display: none; color: #6c63ff; margin-top: 16px; }
+  </style>
+</head>
+<body>
+  <h1>AI Document Analyser</h1>
+  <p>Upload a PDF and get an AI-generated summary instantly.</p>
+
+  <input type="file" id="fileInput" accept=".pdf">
+  <button onclick="uploadFile()">Analyse</button>
+  <div id="loading">Analysing your document...</div>
+
+  <div id="result">
+    <h2>Summary</h2>
+    <div id="summary"></div>
+    <div id="wordcount"></div>
+  </div>
+
+  <script>
+    async function uploadFile() {
+      const file = document.getElementById('fileInput').files[0];
+      if (!file) { alert('Please select a PDF file.'); return; }
+
+      document.getElementById('loading').style.display = 'block';
+      document.getElementById('result').style.display = 'none';
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/upload', { method: 'POST', body: formData });
+      const data = await response.json();
+
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('summary').textContent = data.summary;
+      document.getElementById('wordcount').textContent = `Word count: ${data.word_count}`;
+      document.getElementById('result').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
